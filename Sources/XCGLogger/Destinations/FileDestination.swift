@@ -134,13 +134,14 @@ open class FileDestination: BaseQueuedDestination {
     /// - Returns:  Nothing
     ///
     private func closeFile() {
+      if #available(iOS 13.0, *) {
+        try? logFileHandle?.synchronize()
+        try? logFileHandle?.close()
+      } else {
         logFileHandle?.synchronizeFile()
-        if #available(iOS 13.0, *) {
-          try? logFileHandle?.close()
-        } else {
-          logFileHandle?.closeFile()
-        }
-        logFileHandle = nil
+        logFileHandle?.closeFile()
+      }
+      logFileHandle = nil
     }
 
     /// Force any buffered data to be written to the file.
